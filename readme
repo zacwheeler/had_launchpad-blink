@@ -1,0 +1,16 @@
+This process has been simplified since the original Hack-a-Day article.
+Steps to make it work:
+
+git clone https://github.com/zacwheeler/had_launchpad-blink
+cd had_launchpad-blink
+sudo apt-get install gcc-msp430 mspdebug
+sudo cp 46-TI_launchpad.rules /etc/udev/rules.d/
+sudo restart udev
+(plug in launchpad via USB)
+make
+mspdebug rf2500
+>> prog main.elf
+>> run
+
+If you run into problems with mspdebug it is almost always a device permissions/group membership issue. The quickest way to verify that your problem is one of those two is to to retry the command with `sudo mspdebug rf2500`.
+
