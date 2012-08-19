@@ -20,15 +20,7 @@ Copyright (c) 2010 - Mike Szczys
  THE SOFTWARE.
 */
 
-//#include <msp430x20x2.h>  <-taken care of by including io.h and setting -mmcu=msp430x2012 in cflags
-	/* It's interesting to note that this is not the header
-		file for the chip we are using. This source code
-		is intended for the MSP430G2231 but there's no
-		header file for that specific ship. It apprears
-		That the MPS430x2012 is closely related and
-		I haven't observed any problems with using this
-		header file. */
-#include <io.h>
+#include <msp430.h>
 #include <signal.h>
 
 
@@ -39,14 +31,14 @@ Copyright (c) 2010 - Mike Szczys
 
 
 void initLEDs(void) {
-  LED_DIR |= LED0 + LED1;	//Set LED pins as outputs
-  LED_OUT |= LED0 + LED1;	//Turn on both LEDs
+  LED_DIR |= LED0 | LED1;	//Set LED pins as outputs
+  LED_OUT |= LED0 | LED1;	//Turn on both LEDs
 }
 
 
 int main(void) {
 
-  WDTCTL = WDTPW + WDTHOLD;	// Stop WDT
+  WDTCTL = WDTPW | WDTHOLD;	// Stop WDT
   /*Halt the watchdog timer
       According to the datasheet the watchdog timer
       starts automatically after powerup. It must be
@@ -61,7 +53,7 @@ int main(void) {
 
   BCSCTL3 |= LFXT1S_2;	//Set ACLK to use internal VLO (12 kHz clock)
 
-  TACTL = TASSEL__ACLK | MC__UP;	//Set TimerA to use auxiliary clock in UP mode
+  TACTL = TASSEL_1 | MC_1;	//Set TimerA to use auxiliary clock in UP mode
   TACCTL0 = CCIE;	//Enable the interrupt for TACCR0 match
   TACCR0 = 11999;	/*Set TACCR0 which also starts the timer. At
 				12 kHz, counting to 12000 should output
@@ -75,8 +67,7 @@ int main(void) {
   }
 }
 
-interrupt(TIMERA0_VECTOR) TIMERA0_ISR(void) {
-  LED_OUT ^= (LED0 + LED1);	//Toggle both LEDs
+interrupt(TIMER0_A0_VECTOR) TIMER0A0_ISR(void) {
+  LED_OUT ^= (LED0 | LED1);	//Toggle both LEDs
 }
-
 
